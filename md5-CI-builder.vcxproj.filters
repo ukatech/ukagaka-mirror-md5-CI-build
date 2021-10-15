@@ -21,6 +21,9 @@
     <ClCompile Include="md5.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="_gists.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="updates.hpp">

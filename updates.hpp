@@ -1,5 +1,8 @@
 #include <string>
+#include <map>
 #include <ctime>
+#include <filesystem>
+#include "my-gists/codepage.hpp"
 using namespace std;
 wstring time2str(time_t time){
 	wchar_t buf[512];
@@ -19,12 +22,12 @@ struct update_file_info{
 	}
 };
 class update_file{
-	charset charset;
-	map<update_file_info,file_path>path_map;
+	CODEPAGE_n::CODEPAGE charset;
+	map<update_file_info, filesystem::path>path_map;
 	//map<update_file_info,wstring>md5_map;
-	read(file_path){
+	void read(filesystem::path file_path){
 		path_map.clear();
-		charset=CP_ACP;
+		charset=CODEPAGE_n::CP_ACP;
 		wstring str;
 		while(file_path.read(charset,str)){
 			case str[0,',']{
