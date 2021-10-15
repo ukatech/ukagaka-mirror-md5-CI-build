@@ -1,43 +1,32 @@
-# //check md5 if err then update
-# //then push
+name: 'md5-check'
+description: 'check your update's file, auto fix if error.'
+branding:
+  icon: 'anchor'  
+  color: 'gray-dark'
 
-
-
-# Push changes on your repository
-
-# Use this action to push changes done by other actions to the upstream repository
-# Inputs
-# author-email
-
-# The email that will appear in commits when changes needs to be committed.
-# author-name
-
-# The name that will appear in commits when changes needs to be committed.
-# create-commit
-
-# Instructs to create a commit with changed files.
-# commit-message
-
-# The commit message used when changes needs to be committed.
-# ref
-
-# The name of the local reference to push.
-# remote
-
-# The name of the remote on which to push the changes. Defaults to the tracked remote
-# remote-ref
-
-# The name of the remote reference to pushto. Defaults to the tracked remote branch.
-# fail-if-empty
-
-# Fail the action in case there is nothing to do.
-# Outputs
-# empty
-
-# TRUE when the action did not perform anything.
-# Example usage
-
-# uses: actions-go/push@master
-# with:
-  # commit-message: '[Auto] update pre-puilt dist packages'
-  # remote: origin
+inputs:
+  dir-path:
+    description: 'where is your update file?'
+    required: true
+  commit-message:
+    default: 'md5 fix'
+    required: true
+  committer-email:
+    default: 'taromati2@foxmail.com'
+    required: true
+  committer-name:
+    default: 'Taromati2'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - id: check
+      run: ${{ github.action_path }}\md5-checker.exe ${{ inputs.dir-path }}
+      shell: cmd
+    - id: commit
+      uses: actions-go/push@master
+      with:
+        author-email: ${{ inputs.committer-email }}
+        author-name: ${{ inputs.committer-name }}
+        commit-message: ${{ inputs.commit-message }}
+        remote: origin
