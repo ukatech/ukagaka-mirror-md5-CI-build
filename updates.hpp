@@ -1,6 +1,9 @@
+#include <string>
+#include <ctime>
+using namespace std;
 wstring time2str(time_t time){
 	wchar_t buf[512];
-	if(wcsftime(buf,512,L"%FT%T",gmtime(time)))
+	if(wcsftime(buf,512,L"%FT%T",gmtime(&time)))
 		return buf;
 	else
 		return L"2012-12-21T00:00:00";
