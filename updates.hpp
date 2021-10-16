@@ -1,7 +1,8 @@
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <ctime>
 #include <filesystem>
+#include <cstdio>
 #include "my-gists/codepage.hpp"
 #include "my-gists/file/fgetstring.h"
 using namespace std;
@@ -37,7 +38,7 @@ struct update_file_info{
 };
 class update_file{
 	CODEPAGE_n::CODEPAGE charset;
-	map<update_file_info, filesystem::path> path_map;
+	unordered_map<filesystem::path,update_file_info> path_map;
 	//map<update_file_info,wstring>md5_map;
 	void read(filesystem::path file_path){
 		path_map.clear();
@@ -52,22 +53,20 @@ class update_file{
 			if (key == L"charset") {
 				charset = CODEPAGE_n::StringtoCodePage(str.c_str());
 			}
-			if(key==L"file")
-				update_file_info v=update_file_info(str);
-				filesystem::path k=v.name;
-				if(exists(k))
-					path_map.insert_or_assign(k,v);
+			if(key==L"file"){
+				update_file_info v(str);
+				filesystem::path k(v.name);
+				//if(filesystem::exists(k))
+				path_map.insert_or_assign(k,v);
 			}
 		}
 	};
 	void update(filesystem::path file_path){
-		path_map.foreach(
-			mapper(update_file_info){
-				if file_not_exit{
-					path_map.remove(update_file_info)
-				}
+		for(auto it = path_map.begin(); it != path_map.end(); ) {
+			if(filesystem::exists(it->first)){
+				path_map.erase(it);
 			}
-		)
+		}
 		file_path.foreach_file(
 			mapper(file_path){
 				if(file_path !_in_ path_map){
@@ -83,12 +82,10 @@ class update_file{
 			}
 		)
 	};
-	write(Fp){
-		write(fp,"charset,"+charset.to_string+"\r\n");
-		path_map.for_each(
-			mapper(update_file_info){
-				write(fp,"file,"+(wstring)update_file_info+"\r\n");
-			}
-		)
+	void write(FILE* fp){
+		fputws((L"charset,"+ CODEPAGE_n::CodePagetoString(charset)+L"\r\n").c_str(),fp);
+		for(auto&pair:path_map){
+			fputws((L"file,"+(wstring)pair.second+L"\r\n").c_str(),fp);
+		}
 	};
 };
