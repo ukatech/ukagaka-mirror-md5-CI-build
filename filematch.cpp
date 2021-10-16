@@ -60,6 +60,18 @@ class filepathMatcher{
 	vector<wstring> NotMatchingRules//!*.inf
 
 public:
+	void AddMatchingRule(wstring rule){
+		MatchingRules.push_back(rule);
+	}
+	void AddNotMatchingRule(wstring rule){
+		NotMatchingRules.push_back(rule);
+	}
+	void AddRule(wstring rule){
+		if(rule[0]=='!')
+			AddNotMatchingRule(rule.substr(1));
+		else
+			AddMatchingRule(rule);
+	}
 	bool IsMatch(wstring s){
 		if(IsMatchRules(s,NotMatchingRules))
 			return false;
