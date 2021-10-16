@@ -1,33 +1,5 @@
-
-bool match(const char* pattern, const char *str)
-{
-	if (*pattern == '\0' && *str == '\0')
-		return true;
-	if (*srcstr == '\0')
-	{
-		while (*pattern == '*')
-			pattern++;
-		return (*pattern == '\0');
-	}
-
-	if (*pattern == '?')
-	{
-		return match(pattern + 1, str + 1);
-	}
-	else if (*pattern == '*')
-	{
-		return match(pattern + 1, str) || match(pattern + 1, str + 1) || match(pattern, str + 1);
-	}
-	else if (*pattern == *str)
-	{
-		return match(pattern + 1, str + 1);
-	}
-
-	return false;
-}
-
-bool isMatch(string s, string p) {
-	auto allStars = [](const string& str, int left, int right) {
+bool IsMatchRule(wstring s, wstring p) {
+	auto allStars = [](const wstring& str, int left, int right) {
 		for (int i = left; i < right; ++i) {
 			if (str[i] != '*') {
 				return false;
@@ -52,8 +24,8 @@ bool isMatch(string s, string p) {
 		return s.empty();
 	}
 
-	int sIndex = 0, pIndex = 0;
-	int sRecord = -1, pRecord = -1;
+	size_t sIndex = 0, pIndex = 0;
+	long long int sRecord = -1, pRecord = -1;
 	while (sIndex < s.size() && pIndex < p.size()) {
 		if (p[pIndex] == '*') {
 			++pIndex;
@@ -75,4 +47,24 @@ bool isMatch(string s, string p) {
 	}
 	return allStars(p, pIndex, p.size());
 }
+bool IsMatchRules(const wstring&s, const vector<wstring>&rules){
+	for(auto&rule:rules){
+		if(IsMatchRule(s,rule))
+			return 1;
+	}
+	return 0;
+}
 
+class filepathMatcher{
+	vector<wstring> MatchingRules//*.ai
+	vector<wstring> NotMatchingRules//!*.inf
+
+public:
+	bool IsMatch(wstring s){
+		if(IsMatchRules(s,NotMatchingRules))
+			return false;
+		if(IsMatchRules(s,MatchingRules))
+			return true;
+		return false;
+	}
+}
