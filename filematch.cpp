@@ -55,31 +55,81 @@ bool IsMatchRules(const wstring&s, const vector<wstring>&rules){
 	return 0;
 }
 
-class filepathMatcher{
+template<bool default_as_all_match=true>
+class filepathMatcher_t{
+	typedef filepathMatcher_t<default_as_all_match> self_t;
 	vector<wstring> MatchingRules//*.ai
 	vector<wstring> NotMatchingRules//!*.inf
 
-public:
+	wstring&PreprocessRule(wstring&rule){
+		release_all(rule,L"\\",L"/");
+		if(rule[0]!=L'/')
+			rule=L"*/"+rule;
+		else
+			rule=rule.substr(1);
+		if(rule[rule.size()-1]==L'/')
+			rule=rule.substr(0,rule.size()-1);
+		return rule;
+	}
 	void AddMatchingRule(wstring rule){
 		MatchingRules.push_back(rule);
 	}
 	void AddNotMatchingRule(wstring rule){
 		NotMatchingRules.push_back(rule);
 	}
+public:
 	void AddRule(wstring rule){
 		if(rule[0]=='!')
-			AddNotMatchingRule(rule.substr(1));
+			AddNotMatchingRule(PreprocessRule(rule.substr(1)));
 		else
-			AddMatchingRule(rule);
+			AddMatchingRule(PreprocessRule(rule));
 	}
 	bool IsMatch(wstring s){
-		if(IsMatchRules(s,NotMatchingRules))
-			return false;
-		if(IsMatchRules(s,MatchingRules))
-			return true;
-		return false;
+		if constexpr(default_as_all_match){
+			if(IsMatchRules(s,MatchingRules))
+				return true;
+			if(IsMatchRules(s,NotMatchingRules))
+				return false;
+		}
+		else{
+			if(IsMatchRules(s,NotMatchingRules))
+				return false;
+			if(IsMatchRules(s,MatchingRules))
+				return true;
+		}
+		return default_as_all_match;
 	}
 	bool operator()(wstring s){
 		return IsMatch(s);
+	}
+	//ForDir
+	static filesystem::path base_path;
+	self_t&&GetCopySelfFor(wstring dirlevel){
+		self_t aret;
+		for(auto&rule:MatchingRules){
+			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
+				aret.AddMatchingRule(rule.substr(rule.find(L"/")+1));
+		}
+		for(auto&rule:NotMatchingRules){
+			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
+				aret.AddNotMatchingRule(rule.substr(rule.find(L"/"))+1));
+		}
+		return aret;
+	}
+	void ForDir_mapper(filesystem::path Dir,function<void(filesystem::path)>do_what){
+		if(IsMatch((base_path/path.file_name()).wstring()))
+			if(path.is_directory())
+				for(auto& enty : filesystem::directory_iterator(Dir)){{
+					base_path = base_path/enty.file_name();
+					GetCopySelfFor(enty.file_name()).ForDir_mapper(enty,do_what);
+					base_path = base_path.parent_path();
+				}
+			else{
+				do_what(path);
+			}
+	}
+	void ForDir(filesystem::path Dir,function<void(filesystem::path)>do_what){
+		base_path = Dir.parent_path();
+		ForDir_mapper(Dir,do_what);
 	}
 };
