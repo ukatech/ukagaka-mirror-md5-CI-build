@@ -79,4 +79,7 @@ public:
 			return true;
 		return false;
 	}
-}
+	bool operator()(wstring s){
+		return IsMatch(s);
+	}
+};
