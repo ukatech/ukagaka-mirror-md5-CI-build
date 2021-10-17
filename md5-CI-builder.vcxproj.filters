@@ -29,5 +29,8 @@
     <ClInclude Include="updates.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="filematch.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
