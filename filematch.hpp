@@ -14,10 +14,17 @@ class filepathMatcher_t{
 	void AddMatchingRule(wstring rule);
 	void AddNotMatchingRule(wstring rule);
 public:
+	void clear(){
+		MatchingRules.clear();
+		NotMatchingRules.clear();
+	}
 	void AddRule(wstring rule);
 	bool IsMatch(wstring s);
 	bool operator()(wstring s){
 		return IsMatch(s);
+	}
+	void reverse() {
+		swap(MatchingRules, NotMatchingRules);
 	}
 	//ForDir
 private:

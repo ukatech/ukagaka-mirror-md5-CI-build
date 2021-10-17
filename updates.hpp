@@ -3,11 +3,11 @@
 #include <ctime>
 #include <filesystem>
 #include <cstdio>
+#include "filematch.hpp"
 #include "my-gists/windows/MD5maker.hpp"
 #include "my-gists/codepage.hpp"
 #include "my-gists/STL/to_time_t.hpp"
 #include "my-gists/file/fgetstring.h"
-#include "filematch.hpp"
 using namespace std;
 wstring time2str(time_t time){
 	wchar_t buf[512];
@@ -50,13 +50,16 @@ class update_file{
 	unordered_map<filesystem::path,update_file_info> path_map;
 	DefaultAllMatchFilepathMatcher matcher;
 	//map<update_file_info,wstring>md5_map;
+public:
 	void readrules(filesystem::path file_path) {
+		matcher.clear();
 		wstring str;
 		auto fp=_wfopen(file_path.c_str(), L"r");
 		while(fgetstring(str,fp)){
 			if(str.size())
 				matcher.AddRule(str);
 		}
+		matcher.reverse();
 	}
 	void read(filesystem::path file_path){
 		path_map.clear();
@@ -92,6 +95,12 @@ class update_file{
 				path_map.insert_or_assign(k,v);
 			}
 		);
+	};
+	void write(filesystem::path filepath){
+		auto fp = _wfopen(filepath.wstring().c_str(), L"wb");
+		if(fp)
+			write(fp);
+		fclose(fp);
 	};
 	void write(FILE* fp){
 		fputws((L"charset,"+ CODEPAGE_n::CodePagetoString(charset)+L"\r\n").c_str(),fp);
