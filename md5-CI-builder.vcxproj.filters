@@ -18,9 +18,6 @@
     <ClCompile Include="filematch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="md5.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="_gists.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
