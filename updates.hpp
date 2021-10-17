@@ -5,6 +5,7 @@
 #include <cstdio>
 #include "my-gists/codepage.hpp"
 #include "my-gists/file/fgetstring.h"
+#include "filematch.hpp"
 using namespace std;
 wstring time2str(time_t time){
 	wchar_t buf[512];
@@ -39,7 +40,16 @@ struct update_file_info{
 class update_file{
 	CODEPAGE_n::CODEPAGE charset;
 	unordered_map<filesystem::path,update_file_info> path_map;
+	DefaultAllMatchFilepathMatcher matcher;
 	//map<update_file_info,wstring>md5_map;
+	void readrules(filesystem::path file_path) {
+		wstring str;
+		auto fp=_wfopen(file_path.c_str(), L"r");
+		while(fgetstring(str,fp)){
+			if(str.size())
+				matcher.AddRule(str);
+		}
+	}
 	void read(filesystem::path file_path){
 		path_map.clear();
 		charset=CODEPAGE_n::CP_ACP;

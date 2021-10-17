@@ -27,4 +27,5 @@ private:
 public:
 	void ForDir(filesystem::path Dir, function<void(filesystem::path)>do_what);
 };
-
+typedef filepathMatcher_t<true> DefaultAllMatchFilepathMatcher;
+typedef filepathMatcher_t<false> DefaultNoneMatchFilepathMatcher;
