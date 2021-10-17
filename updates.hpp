@@ -77,20 +77,13 @@ class update_file{
 				path_map.erase(it);
 			}
 		}
-		file_path.foreach_file(
-			mapper(file_path){
-				if(file_path !_in_ path_map){
-					path_map.add(file_path);
-				}
-				else{
-					if(path_map[file_path].time==file_path.last_write_time)
-						return;
-					else{
-						path_map[file_path]=file_path;
-					}
-				}
+		matcher.ForDir(file_path,
+			lambda(filesystem::path file_path){
+				update_file_info v(file_path);
+				filesystem::path k(v.name);
+				path_map.insert_or_assign(k,v);
 			}
-		)
+		);
 	};
 	void write(FILE* fp){
 		fputws((L"charset,"+ CODEPAGE_n::CodePagetoString(charset)+L"\r\n").c_str(),fp);
