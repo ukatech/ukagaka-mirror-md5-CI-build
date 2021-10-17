@@ -1,17 +1,17 @@
-bool IsMatchRule(wstring s, wstring p) {
+inline bool IsMatchRule(wstring s, wstring p) {
 	auto allStars = [](const wstring& str, int left, int right) {
 		for (int i = left; i < right; ++i) {
-			if (str[i] != '*') {
+			if (str[i] != L'*') {
 				return false;
 			}
 		}
 		return true;
 	};
-	auto charMatch = [](char u, char v) {
-		return u == v || v == '?';
+	auto charMatch = [](wchar_t u, wchar_t v) {
+		return u == v || v == L'?';
 	};
 
-	while (s.size() && p.size() && p.back() != '*') {
+	while (s.size() && p.size() && p.back() != L'*') {
 		if (charMatch(s.back(), p.back())) {
 			s.pop_back();
 			p.pop_back();
@@ -27,7 +27,7 @@ bool IsMatchRule(wstring s, wstring p) {
 	size_t sIndex = 0, pIndex = 0;
 	long long int sRecord = -1, pRecord = -1;
 	while (sIndex < s.size() && pIndex < p.size()) {
-		if (p[pIndex] == '*') {
+		if (p[pIndex] == L'*') {
 			++pIndex;
 			sRecord = sIndex;
 			pRecord = pIndex;
@@ -38,8 +38,8 @@ bool IsMatchRule(wstring s, wstring p) {
 		}
 		else if (sRecord != -1 && sRecord + 1 < s.size()) {
 			++sRecord;
-			sIndex = sRecord;
-			pIndex = pRecord;
+			sIndex = (size_t)sRecord;
+			pIndex = (size_t)pRecord;
 		}
 		else {
 			return false;
@@ -47,7 +47,7 @@ bool IsMatchRule(wstring s, wstring p) {
 	}
 	return allStars(p, pIndex, p.size());
 }
-bool IsMatchRules(const wstring&s, const vector<wstring>&rules){
+inline bool IsMatchRules(const wstring&s, const vector<wstring>&rules){
 	for(auto&rule:rules){
 		if(IsMatchRule(s,rule))
 			return 1;
