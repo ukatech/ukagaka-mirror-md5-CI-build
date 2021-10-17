@@ -1,3 +1,10 @@
+#include <string>
+#include <vector>
+#include <filesystem>
+#include <functional>
+#include "my-gists/STL/replace_all.hpp"
+using namespace std;
+
 inline bool IsMatchRule(wstring s, wstring p) {
 	auto allStars = [](const wstring& str, int left, int right) {
 		for (int i = left; i < right; ++i) {
@@ -58,11 +65,11 @@ inline bool IsMatchRules(const wstring&s, const vector<wstring>&rules){
 template<bool default_as_all_match=true>
 class filepathMatcher_t{
 	typedef filepathMatcher_t<default_as_all_match> self_t;
-	vector<wstring> MatchingRules//*.ai
-	vector<wstring> NotMatchingRules//!*.inf
+	vector<wstring> MatchingRules;//*.ai
+	vector<wstring> NotMatchingRules;//!*.inf
 
 	wstring&PreprocessRule(wstring&rule){
-		release_all(rule,L"\\",L"/");
+		replace_all(rule,L"\\",L"/");
 		if(rule[0]!=L'/')
 			rule=L"*/"+rule;
 		else
@@ -103,6 +110,7 @@ public:
 		return IsMatch(s);
 	}
 	//ForDir
+private:
 	static filesystem::path base_path;
 	self_t&&GetCopySelfFor(wstring dirlevel){
 		self_t aret;
@@ -112,14 +120,14 @@ public:
 		}
 		for(auto&rule:NotMatchingRules){
 			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
-				aret.AddNotMatchingRule(rule.substr(rule.find(L"/"))+1));
+				aret.AddNotMatchingRule(rule.substr(rule.find(L"/")+1));
 		}
 		return aret;
 	}
-	void ForDir_mapper(filesystem::path Dir,function<void(filesystem::path)>do_what){
-		if(IsMatch((base_path/path.file_name()).wstring()))
-			if(path.is_directory())
-				for(auto& enty : filesystem::directory_iterator(Dir)){{
+	void ForDir_mapper(filesystem::path path,function<void(filesystem::path)>do_what){
+		if(IsMatch((base_path/path.filename()).wstring()))
+			if(is_directory(path))
+				for(auto& enty : filesystem::directory_iterator(path)){
 					base_path = base_path/enty.file_name();
 					GetCopySelfFor(enty.file_name()).ForDir_mapper(enty,do_what);
 					base_path = base_path.parent_path();
@@ -128,6 +136,7 @@ public:
 				do_what(path);
 			}
 	}
+public:
 	void ForDir(filesystem::path Dir,function<void(filesystem::path)>do_what){
 		base_path = Dir.parent_path();
 		ForDir_mapper(Dir,do_what);
