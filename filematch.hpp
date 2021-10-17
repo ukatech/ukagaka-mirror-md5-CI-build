@@ -22,10 +22,13 @@ public:
 	//ForDir
 private:
 	static filesystem::path base_path;
+	static wstring path_base_on_base_path;
 	self_t&& GetCopySelfFor(wstring dirlevel);
 	void ForDir_mapper(filesystem::path path, function<void(filesystem::path)>do_what);
+	void ForDir_mapper(filesystem::path path, function<void(filesystem::path,wstring)>do_what);
 public:
 	void ForDir(filesystem::path Dir, function<void(filesystem::path)>do_what);
+	void ForDir(filesystem::path Dir, function<void(filesystem::path,wstring)>do_what);
 };
 typedef filepathMatcher_t<true> DefaultAllMatchFilepathMatcher;
 typedef filepathMatcher_t<false> DefaultNoneMatchFilepathMatcher;

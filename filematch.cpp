@@ -112,6 +112,7 @@ public:
 	//ForDir
 private:
 	static filesystem::path base_path;
+	static wstring path_base_on_base_path;
 	self_t&&GetCopySelfFor(wstring dirlevel){
 		self_t aret;
 		for(auto&rule:MatchingRules){
@@ -136,9 +137,30 @@ private:
 				do_what(path);
 			}
 	}
+	void ForDir_mapper(filesystem::path path,function<void(filesystem::path,wstring)>do_what){
+		if(IsMatch((base_path/path.filename()).wstring()))
+			if(is_directory(path)){
+				auto path_base_on_base_path_bak= path_base_on_base_path;
+				path_base_on_base_path += L"/" + path.filename().wstring();
+				for(auto& enty : filesystem::directory_iterator(path)){
+					base_path = base_path/enty.file_name();
+					GetCopySelfFor(enty.file_name()).ForDir_mapper(enty,do_what);
+					base_path = base_path.parent_path();
+				}
+				path_base_on_base_path = path_base_on_base_path_bak;
+			}
+			else{
+				do_what(path, path_base_on_base_path + L"/" + path.filename());
+			}
+	}
 public:
 	void ForDir(filesystem::path Dir,function<void(filesystem::path)>do_what){
 		base_path = Dir.parent_path();
 		ForDir_mapper(Dir,do_what);
+	}
+	void ForDir(filesystem::path Dir, function<void(filesystem::path,wstring)>do_what) {
+		path_base_on_base_path = L"";
+		base_path = Dir.parent_path();
+		ForDir_mapper(Dir, do_what);
 	}
 };

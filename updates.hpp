@@ -3,7 +3,9 @@
 #include <ctime>
 #include <filesystem>
 #include <cstdio>
+#include "my-gists/windows/MD5maker.hpp"
 #include "my-gists/codepage.hpp"
+#include "my-gists/STL/to_time_t.hpp"
 #include "my-gists/file/fgetstring.h"
 #include "filematch.hpp"
 using namespace std;
@@ -32,6 +34,12 @@ struct update_file_info{
 		str = str.substr(str.find(L"\1") + 6);
 		//2021-03-21T14:33:27
 		time = str;
+	}
+	explicit update_file_info(filesystem::path file,wstring filename) {
+		name = filename;
+		md5 = CODEPAGE_n::MultiByteToUnicode(MD5maker.get_file_md5(file.string()),CODEPAGE_n::CP_ACP);
+		size = file_size(file);
+		time = time2str(to_time_t(last_write_time(file)));
 	}
 	explicit operator wstring(){
 		return name+L"\1"+md5+L"\1"+L"size="+to_wstring(size)+L"\1"+L"date="+time+L"\1";
@@ -78,8 +86,8 @@ class update_file{
 			}
 		}
 		matcher.ForDir(file_path,
-			lambda(filesystem::path file_path){
-				update_file_info v(file_path);
+			[this](filesystem::path file_path,wstring filename){
+				update_file_info v(file_path, filename);
 				filesystem::path k(v.name);
 				path_map.insert_or_assign(k,v);
 			}
