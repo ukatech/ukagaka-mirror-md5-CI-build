@@ -59,7 +59,7 @@ public:
 			if(str.size())
 				matcher.AddRule(str);
 		}
-		matcher.reverse();
+		matcher.reverse();//match->ignore
 	}
 	void read(filesystem::path file_path){
 		path_map.clear();
