@@ -72,8 +72,6 @@ class filepathMatcher_t{
 		replace_all(rule,L"\\",L"/");
 		if(rule[0]!=L'/')
 			rule=L"*/"+rule;
-		else
-			rule=rule.substr(1);
 		if(rule[rule.size()-1]==L'/')
 			rule=rule.substr(0,rule.size()-1);
 		return rule;
@@ -112,25 +110,17 @@ public:
 	//ForDir
 private:
 	static inline wstring base_path{};
-	self_t GetCopySelfFor(wstring dirlevel){
-		self_t aret;
-		for(auto&rule:MatchingRules){
-			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
-				aret.AddMatchingRule(rule.substr(rule.find(L"/")+1));
-		}
-		for(auto&rule:NotMatchingRules){
-			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
-				aret.AddNotMatchingRule(rule.substr(rule.find(L"/")+1));
-		}
-		return aret;
-	}
 	void ForDir_mapper(filesystem::path path,function<void(filesystem::path)>do_what){
-		if(IsMatch(path.filename().wstring())){
+		if(IsMatch(base_path+L"/"+path.filename().wstring())){
 			if(is_directory(path)){
-				auto pathMatcher=GetCopySelfFor(path);
+				auto base_path_bak = base_path;
+				base_path +=L"/"+path.filename().wstring();
+				if(base_path ==L"/")
+					base_path.clear();
 				for(auto& enty : filesystem::directory_iterator(path)){
-					pathMatcher.ForDir_mapper(enty,do_what);
+					ForDir_mapper(enty,do_what);
 				}
+				base_path = base_path_bak;
 			}
 			else{
 				do_what(path);
@@ -138,15 +128,14 @@ private:
 		}
 	}
 	void ForDir_mapper(filesystem::path path,function<void(filesystem::path,wstring)>do_what){
-		if(IsMatch(path.filename().wstring())){
+		if(IsMatch(base_path+L"/"+path.filename().wstring())){
 			if(is_directory(path)){
 				auto base_path_bak = base_path;
 				base_path +=L"/"+path.filename().wstring();
 				if(base_path ==L"/")
 					base_path.clear();
-				auto pathMatcher=GetCopySelfFor(path);
 				for(auto& enty : filesystem::directory_iterator(path)){
-					pathMatcher.ForDir_mapper(enty,do_what);
+					ForDir_mapper(enty,do_what);
 				}
 				base_path = base_path_bak;
 			}
@@ -157,6 +146,7 @@ private:
 	}
 public:
 	void ForDir(filesystem::path Dir,function<void(filesystem::path)>do_what){
+		base_path = L"";
 		ForDir_mapper(Dir,do_what);
 	}
 	void ForDir(filesystem::path Dir, function<void(filesystem::path,wstring)>do_what) {

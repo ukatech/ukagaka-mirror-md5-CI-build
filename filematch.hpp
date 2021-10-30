@@ -28,7 +28,6 @@ public:
 	//ForDir
 private:
 	static std::wstring base_path;
-	self_t&& GetCopySelfFor(std::wstring dirlevel);
 	void ForDir_mapper(std::filesystem::path path, std::function<void(std::filesystem::path)>do_what);
 	void ForDir_mapper(std::filesystem::path path, std::function<void(std::filesystem::path, std::wstring)>do_what);
 public:
