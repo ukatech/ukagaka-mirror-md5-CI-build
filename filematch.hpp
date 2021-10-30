@@ -5,22 +5,21 @@
 
 template<bool default_as_all_match=true>
 class filepathMatcher_t{
-	using namespace std;
 	typedef filepathMatcher_t<default_as_all_match> self_t;
-	vector<wstring> MatchingRules;//*.ai
-	vector<wstring> NotMatchingRules;//!*.inf
+	std::vector<std::wstring> MatchingRules;//*.ai
+	std::vector<std::wstring> NotMatchingRules;//!*.inf
 
-	wstring& PreprocessRule(wstring& rule);
-	void AddMatchingRule(wstring rule);
-	void AddNotMatchingRule(wstring rule);
+	std::wstring PreprocessRule(std::wstring rule);
+	void AddMatchingRule(std::wstring rule);
+	void AddNotMatchingRule(std::wstring rule);
 public:
 	void clear(){
 		MatchingRules.clear();
 		NotMatchingRules.clear();
 	}
-	void AddRule(wstring rule);
-	bool IsMatch(wstring s);
-	bool operator()(wstring s){
+	void AddRule(std::wstring rule);
+	bool IsMatch(std::wstring s);
+	bool operator()(std::wstring s){
 		return IsMatch(s);
 	}
 	void reverse() {
@@ -28,14 +27,14 @@ public:
 	}
 	//ForDir
 private:
-	static filesystem::path base_path;
-	static wstring path_base_on_base_path;
-	self_t&& GetCopySelfFor(wstring dirlevel);
-	void ForDir_mapper(filesystem::path path, function<void(filesystem::path)>do_what);
-	void ForDir_mapper(filesystem::path path, function<void(filesystem::path,wstring)>do_what);
+	static std::filesystem::path base_path;
+	static std::wstring path_base_on_base_path;
+	self_t&& GetCopySelfFor(std::wstring dirlevel);
+	void ForDir_mapper(std::filesystem::path path, std::function<void(std::filesystem::path)>do_what);
+	void ForDir_mapper(std::filesystem::path path, std::function<void(std::filesystem::path, std::wstring)>do_what);
 public:
-	void ForDir(filesystem::path Dir, function<void(filesystem::path)>do_what);
-	void ForDir(filesystem::path Dir, function<void(filesystem::path,wstring)>do_what);
+	void ForDir(std::filesystem::path Dir, std::function<void(std::filesystem::path)>do_what);
+	void ForDir(std::filesystem::path Dir, std::function<void(std::filesystem::path, std::wstring)>do_what);
 };
 typedef filepathMatcher_t<true> DefaultAllMatchFilepathMatcher;
 typedef filepathMatcher_t<false> DefaultNoneMatchFilepathMatcher;

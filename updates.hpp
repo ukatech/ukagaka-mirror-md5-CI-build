@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <unordered_map>
 #include <ctime>
@@ -20,7 +21,7 @@ struct update_file_info{
 	//ghost/master/data/Game/UNO/bReverse.png4dbfeee82e8f6e476b5687c18154a571size=1732date=2021-03-21T14:33:27
 	wstring name;
 	wstring md5;
-	size_t size;
+	uintmax_t size;
 	wstring time;
 	explicit update_file_info(wstring str) {
 		name=str.substr(0,str.find(L"\1"));
@@ -30,7 +31,7 @@ struct update_file_info{
 		//size=1732date=2021-03-21T14:33:27
 		str=str.substr(5,str.size()-1);
 		//1732date=2021-03-21T14:33:27
-		size = (size_t)wcstoll(str.substr(0,str.find(L"\1")).c_str(), nullptr, 10);
+		size = (uintmax_t)wcstoll(str.substr(0,str.find(L"\1")).c_str(), nullptr, 10);
 		str = str.substr(str.find(L"\1") + 6);
 		//2021-03-21T14:33:27
 		time = str;
@@ -47,7 +48,7 @@ struct update_file_info{
 };
 class update_file{
 	CODEPAGE_n::CODEPAGE charset;
-	unordered_map<filesystem::path,update_file_info> path_map;
+	unordered_map<wstring,update_file_info> path_map;
 	DefaultAllMatchFilepathMatcher matcher;
 	//map<update_file_info,wstring>md5_map;
 public:
@@ -76,17 +77,19 @@ public:
 			}
 			if(key==L"file"){
 				update_file_info v(str);
-				filesystem::path k(v.name);
+				auto k(v.name);
 				//if(filesystem::exists(k))
 				path_map.insert_or_assign(k,v);
 			}
 		}
 	};
 	void update(filesystem::path file_path){
-		for(auto it = path_map.begin(); it != path_map.end(); ) {
-			if(filesystem::exists(it->first)){
-				path_map.erase(it);
+		for(auto it = path_map.begin(); it != path_map.end();) {
+			if(!filesystem::exists(it->first)){
+				it=path_map.erase(it);
 			}
+			else
+				it++;
 		}
 		matcher.ForDir(file_path,
 			[this](filesystem::path file_path,wstring filename){
@@ -98,9 +101,10 @@ public:
 	};
 	void write(filesystem::path filepath){
 		auto fp = _wfopen(filepath.wstring().c_str(), L"wb");
-		if(fp)
+		if (fp) {
 			write(fp);
-		fclose(fp);
+			fclose(fp);
+		}
 	};
 	void write(FILE* fp){
 		fputws((L"charset,"+ CODEPAGE_n::CodePagetoString(charset)+L"\r\n").c_str(),fp);

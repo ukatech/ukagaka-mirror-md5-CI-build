@@ -68,7 +68,7 @@ class filepathMatcher_t{
 	vector<wstring> MatchingRules;//*.ai
 	vector<wstring> NotMatchingRules;//!*.inf
 
-	wstring&PreprocessRule(wstring&rule){
+	wstring PreprocessRule(wstring rule){
 		replace_all(rule,L"\\",L"/");
 		if(rule[0]!=L'/')
 			rule=L"*/"+rule;
@@ -111,9 +111,9 @@ public:
 	}
 	//ForDir
 private:
-	static filesystem::path base_path;
-	static wstring path_base_on_base_path;
-	self_t&&GetCopySelfFor(wstring dirlevel){
+	static inline filesystem::path base_path{};
+	static inline wstring path_base_on_base_path{};
+	self_t GetCopySelfFor(wstring dirlevel){
 		self_t aret;
 		for(auto&rule:MatchingRules){
 			if(IsMatchRule(dirlevel,rule.substr(0,rule.find(L"/"))))
@@ -129,8 +129,8 @@ private:
 		if(IsMatch((base_path/path.filename()).wstring()))
 			if(is_directory(path))
 				for(auto& enty : filesystem::directory_iterator(path)){
-					base_path = base_path/enty.file_name();
-					GetCopySelfFor(enty.file_name()).ForDir_mapper(enty,do_what);
+					base_path = base_path/filesystem::path(enty).filename();
+					GetCopySelfFor(filesystem::path(enty).filename()).ForDir_mapper(enty,do_what);
 					base_path = base_path.parent_path();
 				}
 			else{
@@ -143,14 +143,14 @@ private:
 				auto path_base_on_base_path_bak= path_base_on_base_path;
 				path_base_on_base_path += L"/" + path.filename().wstring();
 				for(auto& enty : filesystem::directory_iterator(path)){
-					base_path = base_path/enty.file_name();
-					GetCopySelfFor(enty.file_name()).ForDir_mapper(enty,do_what);
+					base_path = base_path/filesystem::path(enty).filename();
+					GetCopySelfFor(filesystem::path(enty).filename()).ForDir_mapper(enty,do_what);
 					base_path = base_path.parent_path();
 				}
 				path_base_on_base_path = path_base_on_base_path_bak;
 			}
 			else{
-				do_what(path, path_base_on_base_path + L"/" + path.filename());
+				do_what(path, path_base_on_base_path + L"/" + path.filename().wstring());
 			}
 	}
 public:
@@ -164,3 +164,5 @@ public:
 		ForDir_mapper(Dir, do_what);
 	}
 };
+template class filepathMatcher_t<true>;
+template class filepathMatcher_t<false>;
