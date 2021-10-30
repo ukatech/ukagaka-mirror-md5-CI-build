@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <ctime>
 #include <filesystem>
 #include <cstdio>
@@ -29,12 +29,12 @@ struct update_file_info{
 		md5 = str.substr(0, str.find(L"\1"));
 		str = str.substr(str.find(L"\1") + 1);
 		//size=1732date=2021-03-21T14:33:27
-		str=str.substr(5,str.size()-1);
-		//1732date=2021-03-21T14:33:27
+		str=str.substr(5);
+		//1732date=2021-03-21T14:33:27
 		size = (uintmax_t)wcstoll(str.substr(0,str.find(L"\1")).c_str(), nullptr, 10);
 		str = str.substr(str.find(L"\1") + 6);
-		//2021-03-21T14:33:27
-		time = str;
+		//2021-03-21T14:33:27
+		time = str.substr(0, str.find(L"\1"));
 	}
 	explicit update_file_info(filesystem::path file,wstring filename) {
 		name = filename;
@@ -48,7 +48,7 @@ struct update_file_info{
 };
 class update_file{
 	CODEPAGE_n::CODEPAGE charset;
-	unordered_map<wstring,update_file_info> path_map;
+	map<wstring,update_file_info> path_map;
 	DefaultAllMatchFilepathMatcher matcher;
 	//map<update_file_info,wstring>md5_map;
 public:
@@ -85,7 +85,7 @@ public:
 	};
 	void update(filesystem::path file_path){
 		for(auto it = path_map.begin(); it != path_map.end();) {
-			if(!filesystem::exists(it->first)){
+			if(!filesystem::exists(file_path.parent_path()/it->first)){
 				it=path_map.erase(it);
 			}
 			else
@@ -93,6 +93,7 @@ public:
 		}
 		matcher.ForDir(file_path,
 			[this](filesystem::path file_path,wstring filename){
+				filename= filename.substr(1);//"/ghost"->"ghost"
 				update_file_info v(file_path, filename);
 				filesystem::path k(v.name);
 				path_map.insert_or_assign(k,v);
@@ -107,9 +108,9 @@ public:
 		}
 	};
 	void write(FILE* fp){
-		fputws((L"charset,"+ CODEPAGE_n::CodePagetoString(charset)+L"\r\n").c_str(),fp);
+		fputs(("charset,"+ CODEPAGE_n::UnicodeToMultiByte(CODEPAGE_n::CodePagetoString(charset), charset)+"\r\n").c_str(),fp);
 		for(auto&pair:path_map){
-			fputws((L"file,"+(wstring)pair.second+L"\r\n").c_str(),fp);
+			fputs(("file,"+ CODEPAGE_n::UnicodeToMultiByte((wstring)pair.second, charset)+"\r\n").c_str(),fp);
 		}
 	};
 };

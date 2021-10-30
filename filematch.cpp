@@ -111,8 +111,7 @@ public:
 	}
 	//ForDir
 private:
-	static inline filesystem::path base_path{};
-	static inline wstring path_base_on_base_path{};
+	static inline wstring base_path{};
 	self_t GetCopySelfFor(wstring dirlevel){
 		self_t aret;
 		for(auto&rule:MatchingRules){
@@ -126,41 +125,42 @@ private:
 		return aret;
 	}
 	void ForDir_mapper(filesystem::path path,function<void(filesystem::path)>do_what){
-		if(IsMatch((base_path/path.filename()).wstring()))
-			if(is_directory(path))
+		if(IsMatch(path.filename().wstring())){
+			if(is_directory(path)){
+				auto pathMatcher=GetCopySelfFor(path);
 				for(auto& enty : filesystem::directory_iterator(path)){
-					base_path = base_path/filesystem::path(enty).filename();
-					GetCopySelfFor(filesystem::path(enty).filename()).ForDir_mapper(enty,do_what);
-					base_path = base_path.parent_path();
+					pathMatcher.ForDir_mapper(enty,do_what);
 				}
+			}
 			else{
 				do_what(path);
 			}
+		}
 	}
 	void ForDir_mapper(filesystem::path path,function<void(filesystem::path,wstring)>do_what){
-		if(IsMatch((base_path/path.filename()).wstring()))
+		if(IsMatch(path.filename().wstring())){
 			if(is_directory(path)){
-				auto path_base_on_base_path_bak= path_base_on_base_path;
-				path_base_on_base_path += L"/" + path.filename().wstring();
+				auto base_path_bak = base_path;
+				base_path +=L"/"+path.filename().wstring();
+				if(base_path ==L"/")
+					base_path.clear();
+				auto pathMatcher=GetCopySelfFor(path);
 				for(auto& enty : filesystem::directory_iterator(path)){
-					base_path = base_path/filesystem::path(enty).filename();
-					GetCopySelfFor(filesystem::path(enty).filename()).ForDir_mapper(enty,do_what);
-					base_path = base_path.parent_path();
+					pathMatcher.ForDir_mapper(enty,do_what);
 				}
-				path_base_on_base_path = path_base_on_base_path_bak;
+				base_path = base_path_bak;
 			}
 			else{
-				do_what(path, path_base_on_base_path + L"/" + path.filename().wstring());
+				do_what(path, base_path+L"/"+path.filename().wstring());
 			}
+		}
 	}
 public:
 	void ForDir(filesystem::path Dir,function<void(filesystem::path)>do_what){
-		base_path = Dir.parent_path();
 		ForDir_mapper(Dir,do_what);
 	}
 	void ForDir(filesystem::path Dir, function<void(filesystem::path,wstring)>do_what) {
-		path_base_on_base_path = L"";
-		base_path = Dir.parent_path();
+		base_path = L"";
 		ForDir_mapper(Dir, do_what);
 	}
 };
