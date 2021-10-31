@@ -15,22 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="filematch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="_gists.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="md5-CI-builder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="updates.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="filematch.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

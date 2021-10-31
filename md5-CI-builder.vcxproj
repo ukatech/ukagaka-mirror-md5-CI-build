@@ -19,13 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="filematch.cpp" />
     <ClCompile Include="md5-CI-builder.cpp" />
     <ClCompile Include="_gists.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="filematch.hpp" />
-    <ClInclude Include="updates.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
