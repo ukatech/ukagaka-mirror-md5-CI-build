@@ -24,9 +24,9 @@ int wmain(int argc,wchar_t** argv){
 			CDirEnumEntry entry;
 			while(ef.next(entry)){
 				if(entry.isdir){
-					file.read(path+entry.name+L"/updates.txt");
-					file.update(path+entry.name+L"/");
-					file.write(path+entry.name+L"/updates.txt");
+					file.read(path+L"/"+entry.name+L"/updates.txt");
+					file.update(path+L"/"+entry.name+L"/");
+					file.write(path+L"/"+entry.name+L"/updates.txt");
 				}
 			}
 		}
