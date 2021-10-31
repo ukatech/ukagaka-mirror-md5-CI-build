@@ -1,0 +1,40 @@
+name: 'md5file-CI-build'
+description: 'auto build your update file.'
+branding:
+  icon: 'anchor'
+  color: 'gray-dark'
+
+inputs:
+  dir-path:
+    default: '.'
+    description: 'where is your update file?'
+    required: true
+  build-mode:
+    default: 'ghost_dir'
+    description: 'ghost_dir(for ghost & each shell) or other(only for a dir)'
+    required: true
+  commit-message:
+    default: 'md5 fix~'
+    required: false
+  committer-email:
+    default: 'taromati2@foxmail.com'
+    required: false
+  committer-name:
+    default: 'Taromati2'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - id: build
+      run: |
+        ${{ github.action_path }}\md5-CI-builder.exe ${{ inputs.build-mode }} ${{ inputs.dir-path }}
+        git add -A
+      shell: cmd
+    - id: commit
+      uses: actions-go/push@master
+      with:
+        author-email: ${{ inputs.committer-email }}
+        author-name: ${{ inputs.committer-name }}
+        commit-message: ${{ inputs.commit-message }}
+        remote: origin
+
