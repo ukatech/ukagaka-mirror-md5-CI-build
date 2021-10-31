@@ -1,8 +1,12 @@
 #include "my-gists/ukagaka/updates.hpp"
+#include "my-gists/file/dir_enum.h"
 using namespace std;
 int wmain(int argc,wchar_t** argv){
-	wstring mode=argv[1];
-	wstring path=argv[2];
+	wstring mode,path;
+	if (argc == 3) {
+		mode=argv[1];
+		path=argv[2];
+	}
 	if(mode==L"ghost_dir"){
 		{
 			updatefile_n::update_file file;
@@ -16,11 +20,13 @@ int wmain(int argc,wchar_t** argv){
 			path=path+L"/shell";
 			updatefile_n::update_file file;
 			file.readrules(path+L"/md5buildignoreforeach.txt");
-			for(auto& enty : filesystem::directory_iterator(path)){
-				if(is_directory(enty)){
-					file.read(enty.path()/L"updates.txt");
-					file.update(enty.path()/L"");
-					file.write(enty.path()/L"updates.txt");
+			CDirEnum ef(path);
+			CDirEnumEntry entry;
+			while(ef.next(entry)){
+				if(entry.isdir){
+					file.read(path+entry.name+L"/updates.txt");
+					file.update(path+entry.name+L"/");
+					file.write(path+entry.name+L"/updates.txt");
 				}
 			}
 		}

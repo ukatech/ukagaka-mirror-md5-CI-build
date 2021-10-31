@@ -5,4 +5,16 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>ghost_dir C:\Users\steve02081504\Documents\workstation\Taromati2_workdirs\ghost-in-the-shell</LocalDebuggerCommandArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerCommandArguments>ghost_dir C:\Users\steve02081504\Documents\workstation\Taromati2_workdirs\ghost-in-the-shell</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommandArguments>ghost_dir C:\Users\steve02081504\Documents\workstation\Taromati2_workdirs\ghost-in-the-shell</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>ghost_dir C:\Users\steve02081504\Documents\workstation\Taromati2_workdirs\ghost-in-the-shell</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>
