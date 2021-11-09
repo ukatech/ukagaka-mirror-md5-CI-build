@@ -12,7 +12,7 @@ int wmain(int argc,wchar_t** argv){
 			updatefile_n::update_file file;
 			file.readrules(path+L"/md5buildignore.txt");
 			file.read(path+L"/updates.txt");
-			file.update(path+L"/");
+			file.update_with_out_time(path+L"/");
 			file.write(path+L"/updates.txt");
 			file.write(path+L"/ghost/master/updates.txt");
 		}
@@ -25,7 +25,7 @@ int wmain(int argc,wchar_t** argv){
 			while(ef.next(entry)){
 				if(entry.isdir){
 					file.read(path+L"/"+entry.name+L"/updates.txt");
-					file.update(path+L"/"+entry.name+L"/");
+					file.update_with_out_time(path+L"/"+entry.name+L"/");
 					file.write(path+L"/"+entry.name+L"/updates.txt");
 				}
 			}
@@ -35,7 +35,7 @@ int wmain(int argc,wchar_t** argv){
 		updatefile_n::update_file file;
 		file.readrules(path+L"/md5buildignore.txt");
 		file.read(path+L"/updates.txt");
-		file.update(path);
+		file.update_with_out_time(path);
 		file.write(path+L"/updates.txt");
 	}
 }
