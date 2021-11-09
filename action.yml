@@ -22,6 +22,10 @@ inputs:
   committer-name:
     default: 'Taromati2'
     required: false
+  no-push:
+    description: 'no push will be performed if this value is true'
+    default: false
+    required: false
 runs:
   using: "composite"
   steps:
@@ -31,6 +35,7 @@ runs:
         git add -A
       shell: cmd
     - id: commit
+      if: ${{ inputs.no-push == 'false' }}
       uses: actions-go/push@master
       with:
         author-email: ${{ inputs.committer-email }}

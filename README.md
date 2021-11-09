@@ -27,6 +27,8 @@ steps:
     dir-path: .\Taromati2 # default is .
     # ghost_dir(for ghost & each shell) or other(only for a dir)
     build-mode: ghost_dir # default is ghost_dir
+    # no push will be performed if this value is true
+    # no-push: # optional, default is flase
     # 
     # commit-message: # optional, default is 'md5 fix~'
     # 
