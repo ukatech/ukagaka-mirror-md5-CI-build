@@ -34,8 +34,11 @@ runs:
         ${{ github.action_path }}\md5-CI-builder.exe ${{ inputs.build-mode }} ${{ inputs.dir-path }}
         git add -A
       shell: cmd
+    - if: ${{ inputs.no-push == 'false' && startsWith(github.ref, 'refs/tags/') }}
+      run: echo "::warning title=ref is a tag::The ref should not be a tag, consider using tags-ignore to avoid the tag being used as a ref to trigger this workflow"
+      shell: cmd
     - id: commit
-      if: ${{ inputs.no-push == 'false' }}
+      if: ${{ inputs.no-push == 'false' && !startsWith(inputs.ref, 'refs/tags/') }}
       uses: actions-go/push@master
       with:
         author-email: ${{ inputs.committer-email }}
