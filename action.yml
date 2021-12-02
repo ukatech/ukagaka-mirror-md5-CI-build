@@ -38,7 +38,7 @@ runs:
       run: echo "::warning title=ref is a tag::The ref should not be a tag, consider using tags-ignore to avoid the tag being used as a ref to trigger this workflow"
       shell: cmd
     - id: commit
-      if: ${{ inputs.no-push == 'false' && !startsWith(inputs.ref, 'refs/tags/') }}
+      if: ${{ inputs.no-push == 'false' && !startsWith(github.ref, 'refs/tags/') }}
       uses: actions-go/push@master
       with:
         author-email: ${{ inputs.committer-email }}
