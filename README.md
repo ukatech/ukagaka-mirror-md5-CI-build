@@ -6,6 +6,7 @@ ______
 # ukagaka-mirror-md5-CI-build  
  > How bad would it be if the md5 didn't match  
 
+exe's source code in [exe branch](https://github.com/Taromati2/ukagaka-mirror-md5-CI-build/tree/exe)  
 about `github action`: https://docs.github.com/actions  
 
 useage: https://github.com/Taromati2/stable-mirror/blob/master/.github/workflows/md5-CI-build.yml  
