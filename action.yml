@@ -17,7 +17,7 @@ inputs:
     default: 'md5 fix~'
     required: false
   committer-email:
-    default: 'taromati2@foxmail.com'
+    default: 'taromati2@outlook.com'
     required: false
   committer-name:
     default: 'Taromati2'
