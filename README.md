@@ -32,7 +32,7 @@ steps:
     # 
     # commit-message: # optional, default is 'md5 fix~'
     # 
-    # committer-email: # optional, default is taromati2@foxmail.com
+    # committer-email: # optional, default is taromati2@outlook.com
     # 
     # committer-name: # optional, default is Taromati2
 ```
