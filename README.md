@@ -10,6 +10,10 @@ about `github action`: https://docs.github.com/actions
 
 useage: https://github.com/Taromati2/stable-mirror/blob/master/.github/workflows/md5-CI-build.yml  
 ```yml
+#after the recent github update, you need to additionally specify the workflow permissions to allow reading and writing
+#like
+permissions:
+  contents: write #see https://docs.github.com/actions/using-jobs/assigning-permissions-to-jobs
 #//...
 runs-on: windows-latest
 steps:
